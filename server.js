@@ -1,11 +1,23 @@
+require('dotenv').config();
 const express = require('express');
-const app = express();
-const PORT = 3000;
+const connectDB = require('./config/db');
+const roomController = require('./controllers/roomController');
 
+const app = express();
+app.use(express.json());
+
+//connect db
+connectDB();
+
+//test route
 app.get('/', (req, res) => {
-    res.send("ushare welcomes");
+    res.send("ushare backend is da here");
 });
 
+//* Room creation route
+app.post('/api/rooms/create', roomController.createRoom);
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
 });
