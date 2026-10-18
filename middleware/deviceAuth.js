@@ -38,4 +38,4 @@ const deviceAuth = async (req, res, next) => {
     }
 };
 
-mode.exports = deviceAuth;
+module.exports = deviceAuth;
