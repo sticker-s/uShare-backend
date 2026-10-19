@@ -21,7 +21,7 @@ exports.generateCode = async (req, res) => {
         // generates a unique code everytime.
         let code = generate6DigitCode();
         let exists = await PairingCode.findOne({ code });
-        while (exist) {
+        while (exists) {
             code = generate6DigitCode();
             exists = await PairingCode.findOne({ code });
         }
@@ -160,7 +160,7 @@ exports.checkRequestStatus = async (req, res) => {
     try {
 
         const { requestId } = req.params;
-        const request = await PairingRequest.findById({ requestId });
+        const request = await PairingRequest.findById(requestId);
         if (!request) {
             return res.status(404).json({ success: false, error: 'Request expired or not found' });
         }
