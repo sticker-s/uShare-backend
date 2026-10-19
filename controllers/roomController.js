@@ -1,6 +1,6 @@
 const Room = require('../models/Room');
 const Device = require('../models/Device');
-const { generateToken, hashToken } = require('../utils/cryptoUtils');
+const { generateRawToken, hashToken } = require('../utils/cryptoUtils');
 
 exports.createRoom = async (req, res) => {
     try {
@@ -9,7 +9,7 @@ exports.createRoom = async (req, res) => {
         const newRoom = await Room.create({ name: roomName || 'My Room' });
 
         //* generate token
-        const rawToken = generateToken();
+        const rawToken = generateRawToken();
         const tokenHash = hashToken(rawToken);
 
         //* save the owner device record
