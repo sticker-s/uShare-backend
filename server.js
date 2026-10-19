@@ -3,6 +3,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const roomController = require('./controllers/roomController');
 const deviceRoutes = require('./routes/deviceRoutes');
+const pairingRoutes = require('./routes/pairingRoutes');
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,9 @@ app.post('/api/rooms/create', roomController.createRoom);
 
 //* device management routes
 app.use('/api/devices', deviceRoutes);
+
+//* device pairing routes
+app.use('/api/pairing', pairingRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
