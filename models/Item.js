@@ -9,10 +9,13 @@ const itemSchema = new mongoose.Schema({
         originalName: { type: String },
         mimeType: { type: String },
         size: { type: Number },
-        path: { type: String },
+        cloudKey: { type: String },
         url: { type: String }
     },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    expiresAt: { type: Date, required: true }
 });
 
+//TTL index: to cleanup after expires
+itemSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 module.exports = mongoose.model('Item', itemSchema);
