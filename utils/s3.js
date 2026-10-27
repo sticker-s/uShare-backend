@@ -10,7 +10,7 @@ const s3Client = new S3Client({
 
 });
 
-// yo upload memory directly to cloud
+// to upload memory directly to cloud
 const uploadToCloud = async (fileBuffer, fileName, mimeType) => {
     const command = new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME,
