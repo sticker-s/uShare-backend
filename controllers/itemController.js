@@ -1,4 +1,3 @@
-const { defaultS3HttpAuthSchemeParametersProvider } = require('@aws-sdk/client-s3/dist-types/auth/httpAuthSchemeProvider');
 const Item = require('../models/Item');
 const { generatePresignedUploadUrl, deleteFromCloud } = require('../utils/s3');
 const path = require('path');
