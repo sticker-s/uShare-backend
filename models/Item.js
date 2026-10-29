@@ -17,6 +17,7 @@ const itemSchema = new mongoose.Schema({
         cloudKey: { type: String },
         url: { type: String }
     },
+    status: { type: String, enum: ['pending_upload', 'active'], default: 'active' },
     createdAt: { type: Date, default: Date.now },
     expiresAt: { type: Date, required: true }
 });
