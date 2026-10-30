@@ -5,16 +5,17 @@ const itemSchema = new mongoose.Schema({
     senderDeviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Device', required: true },
     type: { type: String, enum: ['text', 'link', 'file'], required: true },
     content: { type: String, required: true },
+
     isEncrypted: { type: Boolean, default: false },
     encryptionMeta: {
-        iv: { type: String, default: null }, // AES initialization vector
-        authTag: { type: String, default: null } // AES Auth tag
+        iv: { type: String, default: null }, //  initialization vector
+        authTag: { type: String, default: null } //  Auth tag
     },
     fileData: {
         originalName: { type: String },
         mimeType: { type: String },
         size: { type: Number },
-        cloudKey: { type: String },
+        cloudinaryPublidId: { type: String },
         url: { type: String }
     },
     status: { type: String, enum: ['pending_upload', 'active'], default: 'active' },
