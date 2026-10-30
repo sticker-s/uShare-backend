@@ -1,5 +1,5 @@
 const Item = require('../models/Item');
-const { generatePresignedUploadUrl, deleteFromCloud } = require('../utils/s3');
+const { generateUploadSignature, deleteFromCloudinary } = require('../utils/cloudinary');
 const path = require('path');
 
 const calculateExpiresAt = (preset = 'id') => {
@@ -57,18 +57,18 @@ exports.shareTextOrLink = async (req, res) => {
 }
 
 // direct upload step 1: generate presigned cloudflare upload URL
-exports.getPresignedUploadUrl = async (req, res) => {
+exports.getUploadSignature = async (req, res) => {
     try {
         const { originalName, mimeType, size, caption, expiry, isEncrypted, iv, authTag } = req.body;
 
-        if (!originalName || !mimeType) {
-            return res.status(400).json({ success: false, error: 'originalName or mimeType are required' });
+        if (!originalName) {
+            return res.status(400).json({ success: false, error: 'originalName is required' });
         }
 
-        const ext = path.extname(originalName) || '.bin';
-        const cloudKey = `room-${req.roomId}/${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
-
-        const { uploadUrl, publicUrl } = await generatePresignedUploadUrl(cloudKey, mimeType);
+        const folder = `ushare/room-${req.roomId}`;
+        const uniqueId = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+        const publicId = `${folder}/${uniqueId}`;
+        const signatureData = generateUploadSignature(uniqueId, folder);
         const expiresAt = calculateExpiresAt(expiry);
 
         const newItem = await Item.create({
@@ -80,10 +80,10 @@ exports.getPresignedUploadUrl = async (req, res) => {
             encryptionMeta: isEncrypted ? { iv, authTag } : undefined,
             fileData: {
                 originalName,
-                mimeType,
+                mimeType: mimeType || 'application/octet-stream',
                 size: size || 0,
-                cloudKey,
-                url: publicUrl
+                cloudinaryPublidId: publicId,
+
             },
             expiresAt,
             status: 'pending_upload'
@@ -92,9 +92,7 @@ exports.getPresignedUploadUrl = async (req, res) => {
         res.status(201).json({
             success: true,
             itemId: newItem._id,
-            uploadUrl,
-            publicUrl,
-            cloudKey
+            uploadParams: signatureData
         });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
@@ -105,6 +103,7 @@ exports.getPresignedUploadUrl = async (req, res) => {
 exports.confirmUploadComplete = async (req, res) => {
     try {
         const { itemId } = req.params;
+        const { cloudUrl } = req.body;
         const item = await Item.findOne({ _id: itemId, roomId: req.roomId });
 
         if (!item) {
@@ -114,6 +113,9 @@ exports.confirmUploadComplete = async (req, res) => {
         }
 
         item.status = 'active';
+        if (cloudUrl) {
+            item.fileData.url = cloudUrl;
+        }
         await item.save();
         await item.populate('senderDeviceId', 'name role');
 
@@ -156,8 +158,8 @@ exports.deleteItem = async (req, res) => {
         if (!isSender && !isOwner) {
             return res.status(403).json({ success: false, error: 'Permission Denied' });
         }
-        if (item.type === 'file' && item.fileData && item.fileData.cloudKey) {
-            await deleteFromCloud(item.fileData.cloudKey);
+        if (item.type === 'file' && item.fileData && item.fileData.cloudinaryPublidId) {
+            await deleteFromCloudinary(item.fileData.cloudinaryPublidId);
         }
 
         await Item.findByIdAndDelete(itemId);

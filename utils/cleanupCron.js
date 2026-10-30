@@ -1,5 +1,5 @@
 const Item = require('../models/Item');
-const { deleteFromCloud } = require('../utils/s3');
+const { deleteFromCloudinary } = require('../utils/cloudinary');
 
 const startCleanupTask = () => {
     setInterval(async () => {
@@ -10,14 +10,14 @@ const startCleanupTask = () => {
                 expiresAt: { $lte: now }
             });
             for (const item of expiredFileItems) {
-                if (item.fileData && item.fileData.cloudKey) {
-                    await deleteFromCloud(item.fileData.cloudKey);
-                    console.log(`[R2 CLeanup] Purged expired cloud object: ${item.fileData.cloudKey}`);
+                if (item.fileData && item.fileData.cloudinaryPublidId) {
+                    await deleteFromCloudinary(item.fileData.cloudinaryPublidId);
+                    console.log(`[CLeanup] Purged expired cloud object: ${item.fileData.cloudinaryPublidId}`);
                 }
                 await Item.findByIdAndDelete(item._id);
             }
         } catch (error) {
-            console.error('[R2 cleanup error]: ', error.message);
+            console.error('[cleanup error]: ', error.message);
         }
     }, 60 * 1000);
 };
