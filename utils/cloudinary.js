@@ -6,12 +6,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const generateUploadSignature = (publidId, folder) => {
+const generateUploadSignature = (publicId, folder) => {
     const timestamp = Math.round(new Date().getTime() / 1000);
 
     const paramsToSign = {
         timestamp: timestamp,
-        public_id: publidId,
+        public_id: publicId,
         folder: folder
     };
 
@@ -25,9 +25,9 @@ const generateUploadSignature = (publidId, folder) => {
         signature,
         apiKey: process.env.CLOUDINARY_API_KEY,
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-        publidId,
+        publicId,
         folder,
-        uploadUrl: `[suspicious link removed]${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload`
+        uploadUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload`
     };
 };
 

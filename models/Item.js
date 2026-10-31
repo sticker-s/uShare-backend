@@ -15,7 +15,7 @@ const itemSchema = new mongoose.Schema({
         originalName: { type: String },
         mimeType: { type: String },
         size: { type: Number },
-        cloudinaryPublidId: { type: String },
+        cloudinaryPublicId: { type: String },
         url: { type: String }
     },
     status: { type: String, enum: ['pending_upload', 'active'], default: 'active' },

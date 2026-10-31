@@ -10,9 +10,9 @@ const startCleanupTask = () => {
                 expiresAt: { $lte: now }
             });
             for (const item of expiredFileItems) {
-                if (item.fileData && item.fileData.cloudinaryPublidId) {
-                    await deleteFromCloudinary(item.fileData.cloudinaryPublidId);
-                    console.log(`[CLeanup] Purged expired cloud object: ${item.fileData.cloudinaryPublidId}`);
+                if (item.fileData && item.fileData.cloudinaryPublicId) {
+                    await deleteFromCloudinary(item.fileData.cloudinaryPublicId);
+                    console.log(`[CLeanup] Purged expired cloud object: ${item.fileData.cloudinaryPublicId}`);
                 }
                 await Item.findByIdAndDelete(item._id);
             }

@@ -82,7 +82,7 @@ exports.getUploadSignature = async (req, res) => {
                 originalName,
                 mimeType: mimeType || 'application/octet-stream',
                 size: size || 0,
-                cloudinaryPublidId: publicId,
+                cloudinaryPublicId: publicId,
 
             },
             expiresAt,
@@ -158,8 +158,8 @@ exports.deleteItem = async (req, res) => {
         if (!isSender && !isOwner) {
             return res.status(403).json({ success: false, error: 'Permission Denied' });
         }
-        if (item.type === 'file' && item.fileData && item.fileData.cloudinaryPublidId) {
-            await deleteFromCloudinary(item.fileData.cloudinaryPublidId);
+        if (item.type === 'file' && item.fileData && item.fileData.cloudinaryPublicId) {
+            await deleteFromCloudinary(item.fileData.cloudinaryPublicId);
         }
 
         await Item.findByIdAndDelete(itemId);
