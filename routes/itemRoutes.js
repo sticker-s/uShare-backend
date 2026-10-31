@@ -7,7 +7,7 @@ router.use(deviceAuth);
 
 router.get('/', itemController.getRoomItems);
 router.post('/text-link', itemController.shareTextOrLink);
-router.post('/upload-url', itemController.getUploadSignature);
+router.post('/upload-signature', itemController.getUploadSignature);
 router.post('/confirm-upload/:itemId', itemController.confirmUploadComplete);
 router.delete('/:itemId', itemController.deleteItem);
 
