@@ -8,7 +8,7 @@ router.post('/request', pairingController.requestJoin);
 router.get('/status/:requestId', pairingController.checkRequestStatus);
 
 // owner endpoints
-router.post('/generate', deviceAuth, pairingController.generateCode);
+router.post('/generate-code', deviceAuth, pairingController.generateCode);
 router.get('/requests', deviceAuth, pairingController.getPendingRequests);
 router.post('/respond/:requestId', deviceAuth, pairingController.respondToRequest);
 

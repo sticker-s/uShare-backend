@@ -24,8 +24,12 @@ exports.createRoom = async (req, res) => {
         res.status(201).json({
             success: true,
             roomId: newRoom._id,
-            deviceId: ownerDevice._id,
-            deviceToken: rawToken
+            rawToken: rawToken,
+            ownerDevice: {
+                id: ownerDevice._id,
+                name: ownerDevice.name,
+                role: ownerDevice.role
+            }
         });
 
     } catch (error) {
