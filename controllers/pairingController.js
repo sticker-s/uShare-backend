@@ -35,7 +35,7 @@ exports.generateCode = async (req, res) => {
         res.status(201).json({
             success: true,
             code: newPairingCode.code,
-            expiresInSeconds: 300
+            expiresInSeconds: 180
         })
 
     } catch (error) {
@@ -76,7 +76,7 @@ exports.requestJoin = async (req, res) => {
     }
 };
 
-// owner only . list all pending requests 
+// owner only . list all pending requests
 exports.getPendingRequests = async (req, res) => {
     try {
         if (req.device.role !== 'owner') {
