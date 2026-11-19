@@ -27,15 +27,18 @@ const generateUploadSignature = (publicId, folder) => {
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
         publicId,
         folder,
-        uploadUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload`
+        uploadUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/auto/upload`
     };
 };
 
 
-const deleteFromCloudinary = async (publicId) => {
+const deleteFromCloudinary = async (publicId, resourceType = 'raw') => {
     try {
-        await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
-        console.log(`[cloudinary cleanup] Delted asset: ${publicId}`);
+        let res = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+        if (res.result === 'not found' && resourceType === 'raw') {
+            res = await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+        }
+        console.log(`[cloudinary cleanup] Deleted asset: ${publicId} (status: ${res.result})`);
     } catch (error) {
         console.error('[cloudinary Deletion Error]:', error.message);
     }

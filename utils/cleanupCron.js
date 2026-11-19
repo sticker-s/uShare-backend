@@ -5,14 +5,17 @@ const startCleanupTask = () => {
     setInterval(async () => {
         try {
             const now = new Date();
-            const expiredFileItems = await Item.find({
-                type: 'file',
+            const expiredItems = await Item.find({
                 expiresAt: { $lte: now }
             });
-            for (const item of expiredFileItems) {
-                if (item.fileData && item.fileData.cloudinaryPublicId) {
-                    await deleteFromCloudinary(item.fileData.cloudinaryPublicId);
-                    console.log(`[CLeanup] Purged expired cloud object: ${item.fileData.cloudinaryPublicId}`);
+            for (const item of expiredItems) {
+                if (item.type === 'file' && item.fileData) {
+                  const publicId = item.fileData.publicId || item.fileData.cloudinaryPublicId;
+                  if (publicId) {
+                    const resourceType = item.fileData.mimeType?.startsWith('image/') ? 'image' : 'raw';
+                    await deleteFromCloudinary(item.fileData.publicId, resourceType);
+                    console.log(`[Cleanup] Purged expired cloud asset: ${publicId}`);
+                  }
                 }
                 await Item.findByIdAndDelete(item._id);
             }
