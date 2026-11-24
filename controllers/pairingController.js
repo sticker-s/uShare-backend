@@ -106,7 +106,7 @@ exports.respondToRequest = async (req, res) => {
         }
 
         const { requestId } = req.params;
-        const { action } = req.body;
+        const { action, roomKey } = req.body;
 
         if (!['approve', 'reject'].includes(action)) {
             return res.status(400).json({
@@ -135,19 +135,21 @@ exports.respondToRequest = async (req, res) => {
         }
 
         // for accept. add the new device to the room. also assign its token no.
-        const rawToken = generateRawToken();
-        const tokenHash = hashToken(rawToken);
+        // const rawToken = generateRawToken();
+        // const tokenHash = hashToken(rawToken);
+        const token = crypto.randomBytes(32).toString('hex');
 
         const newDevice = await Device.create({
             roomId: req.roomId,
             name: request.deviceName,
-            tokenHash: tokenHash,
+            tokenHash: token,
             role: 'member'
         });
 
         request.status = 'approved';
-        request.issuedToken = rawToken;
+        request.issuedToken = token;
         request.newDeviceId = newDevice._id;
+        request.roomKey = roomKey || null;
         await request.save();
 
         res.status(200).json({ success: true, message: 'Device added to room', deviceId: newDevice._id });
@@ -173,7 +175,12 @@ exports.checkRequestStatus = async (req, res) => {
         }
 
         return res.status(200).json({
-            success: true, status: 'approved', roomId: request.roomId, deviceId: request.newDeviceId, deviceToken: request.issuedToken
+            success: true,
+            status: 'approved',
+            roomId: request.roomId,
+            deviceId: request.newDeviceId,
+            deviceToken: request.issuedToken,
+            roomKey: request.roomKey
         });
 
     } catch (error) {
