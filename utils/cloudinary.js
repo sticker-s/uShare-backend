@@ -27,7 +27,7 @@ const generateUploadSignature = (publicId, folder) => {
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
         publicId,
         folder,
-        uploadUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/auto/upload`
+        uploadUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload`
     };
 };
 

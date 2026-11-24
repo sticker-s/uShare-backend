@@ -135,19 +135,19 @@ exports.respondToRequest = async (req, res) => {
         }
 
         // for accept. add the new device to the room. also assign its token no.
-        // const rawToken = generateRawToken();
-        // const tokenHash = hashToken(rawToken);
-        const token = crypto.randomBytes(32).toString('hex');
+        const rawToken = generateRawToken();
+        const tokenHash = hashToken(rawToken);
+        // const token = crypto.randomBytes(32).toString('hex');
 
         const newDevice = await Device.create({
             roomId: req.roomId,
             name: request.deviceName,
-            tokenHash: token,
+            tokenHash: tokenHash,
             role: 'member'
         });
 
         request.status = 'approved';
-        request.issuedToken = token;
+        request.issuedToken = rawToken;
         request.newDeviceId = newDevice._id;
         request.roomKey = roomKey || null;
         await request.save();
